@@ -10,10 +10,17 @@ def main():
   if not user_hash:
     print("Login failed — check your .env credentials.")
     return
-
-  set_number = input("Enter LEGO set number: ").strip()
-  lego_set = get_lego_price(set_number, API_KEY, user_hash)
-  print(lego_set)
+  correct = False
+  
+  while not correct: 
+    set_number = input("Enter LEGO set number: ").strip()
+    lego_set = get_lego_price(set_number, API_KEY, user_hash)
+    print(lego_set)
+  
+    is_correct = input("Is this the correct set (Y/N)? ").upper().strip()
+    if(is_correct == "Y"):
+      correct = True
+  
   
 if __name__ =="__main__":
   main()

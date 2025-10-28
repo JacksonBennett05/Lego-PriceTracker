@@ -36,9 +36,10 @@ def get_lego_price(set_num, api_key, user_hash):
   data = r.json()
   sets = data.get("sets")
   if not sets:
-    return {"Retailer": "LEGO", "Price": "N/A", "URL": "https://brickset.com"}
+    return {"Set Name": "N/A", "Retailer": "LEGO", "Price": "N/A", "URL": "https://brickset.com"}
   
   set_info = sets[0]
+  name = set_info.get("name", "Unknown Set")
   price = None
   
   try: 
@@ -50,9 +51,10 @@ def get_lego_price(set_num, api_key, user_hash):
     price = f"${price}"
 
   return {
-      "Retailer": "LEGO",
-      "Price": price,
-      "URL": set_info.get("bricksetURL", "https://brickset.com")
+    "Set Name": name,
+    "Retailer": "LEGO",
+    "Price": price,
+    "URL": set_info.get("bricksetURL", "https://brickset.com")
   }
 
 if __name__ == "__main__":
