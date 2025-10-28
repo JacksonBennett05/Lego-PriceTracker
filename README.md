@@ -26,3 +26,12 @@ LegoPriceTracker is a Python project that compares prices for a specific LEGO se
 3. Install Dependencies
 ```bash
   pip install -r requirements.txt
+```
+
+## Running CLI
+1. Enter source folder
+ ```bash
+  cd src
+ ```
+2. Enter Set number when Prompted
+3. Confirm correct set or try again
