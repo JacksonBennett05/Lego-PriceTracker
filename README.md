@@ -1,6 +1,6 @@
 # LegoPriceTracker
 
-LegoPriceTracker is a Python project that compares prices for a specific LEGO set across multiple retailers (LEGO, Target, Walmart) to find the cheapest option.
+LegoPriceTracker is a Python project that compares prices for a specific LEGO set across multiple retailers (LEGO, Target, Walmart, BestBuy) to find the cheapest option.
 
 ---
 
