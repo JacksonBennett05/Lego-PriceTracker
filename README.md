@@ -29,9 +29,9 @@ LegoPriceTracker is a Python project that compares prices for a specific LEGO se
 ```
 
 ## Running CLI
-1. Enter source folder
+1. Run the main script directly from root of the project
  ```bash
-  cd src 
+  python src/main.py
  ```
 2. Enter Set number when Prompted
 3. Confirm correct set or try again
