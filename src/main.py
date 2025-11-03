@@ -1,4 +1,5 @@
 from scraper.lego_scraper import brickset_login, get_lego_price
+from utils.compare import find_cheapest
 import os
 
 def main():
@@ -20,7 +21,7 @@ def main():
     is_correct = input("Is this the correct set (Y/N)? ").upper().strip()
     if(is_correct == "Y"):
       correct = True
-  
+  print("Testing", lego_set.get("Price"))
   
 if __name__ =="__main__":
   main()
