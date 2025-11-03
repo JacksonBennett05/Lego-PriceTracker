@@ -21,7 +21,8 @@ def main():
     is_correct = input("Is this the correct set (Y/N)? ").upper().strip()
     if(is_correct == "Y"):
       correct = True
-  print("Testing", lego_set.get("Price"))
+  lego_price_json = {"lego.com": lego_set.get("Price")}
+  print(lego_price_json)
   
 if __name__ =="__main__":
   main()
