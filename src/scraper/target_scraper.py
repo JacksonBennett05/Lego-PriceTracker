@@ -8,6 +8,8 @@ def get_target_price(set_num):
   soup = BeautifulSoup(r.text, "html.parser")
 
   product_tag = soup.find("a", {"data-test": "product-title"})
+  print(r.status_code)
+  print(soup.prettify()[:1500])
   if not product_tag:
     return {"error": "Set not found on Target"}
     
@@ -28,3 +30,7 @@ def get_target_price(set_num):
     "price": price,
     "url": product_url
   }
+  
+if __name__ == "__main__":
+  result = get_target_price("75399")
+  print(result)
