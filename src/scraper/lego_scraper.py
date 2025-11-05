@@ -58,9 +58,9 @@ def get_lego_price(set_num, api_key, user_hash):
   }
 
 if __name__ == "__main__":
-    user_hash = brickset_login(API_KEY, USERNAME, PASSWORD)
-    print("User hash:", user_hash)
-    if user_hash:
-        print(get_lego_price("75399", API_KEY, user_hash))
-    else:
-        print("Login failed")
+  user_hash = brickset_login(API_KEY, USERNAME, PASSWORD)
+  print("User hash:", user_hash)
+  if user_hash:
+    print(get_lego_price("75399", API_KEY, user_hash))
+  else:
+    print("Login failed")
