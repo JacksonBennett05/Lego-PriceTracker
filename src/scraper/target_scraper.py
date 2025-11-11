@@ -37,16 +37,16 @@ def scrape_target_lego(query, limit=5):
     search_data = data.get("data", {}).get("search", {})
     products_raw = search_data.get("products", [])
     
-    print(f"\n[DEBUG] Found {len(products_raw)} products in search")
+    # print(f"\n[DEBUG] Found {len(products_raw)} products in search")
     
     products = []
     for idx, product in enumerate(products_raw):
-      print(f"\n[DEBUG] Product {idx + 1} keys: {list(product.keys())}")
+      # print(f"\n[DEBUG] Product {idx + 1} keys: {list(product.keys())}")
       
       # Extract price
       price = "N/A"
       if "price" in product:
-        print(f"[DEBUG] Price keys: {list(product['price'].keys())}")
+        # print(f"[DEBUG] Price keys: {list(product['price'].keys())}")
         price_obj = product["price"]
         price = (price_obj.get("formatted_current_price") or
                 price_obj.get("current_retail") or
@@ -60,7 +60,7 @@ def scrape_target_lego(query, limit=5):
       name = prod_desc.get("title", "N/A")
       url = enrichment.get("buy_url", "N/A")
       
-      print(f"[DEBUG] Extracted - Name: {name[:50]}..., Price: {price}")
+      # print(f"[DEBUG] Extracted - Name: {name[:50]}..., Price: {price}")
       
       product_info = {
         "Retailer": "Target",
@@ -69,18 +69,11 @@ def scrape_target_lego(query, limit=5):
       }
       
       products.append(product_info)
-    
-    # Display results
+
     if products:
-      print("\n" + "=" * 60)
-      print("Results:")
-      print("-" * 60)
-      for prod in products:
-        print(prod)
+      return products[0]
     else:
-      print("\nNo products found!")
-    
-    return products
+      return None
   
   except Exception as e:
     print(f"Error: {e}")
@@ -89,4 +82,4 @@ def scrape_target_lego(query, limit=5):
     return []
 
 if __name__ == "__main__":
-  results = scrape_target_lego("lego 75390", limit=1)
+  results = scrape_target_lego("lego 75354", limit=1)
