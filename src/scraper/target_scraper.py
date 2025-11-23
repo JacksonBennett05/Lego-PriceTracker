@@ -26,8 +26,8 @@ def scrape_target_lego(query, limit=5):
   )
   
   try:
-    print(f"\nSearching Target for: {query}")
-    print("=" * 60)
+    # print(f"\nSearching Target for: {query}")
+    # print("=" * 60)
     
     resp = requests.get(search_url, headers=headers, timeout=10)
     resp.raise_for_status()
@@ -36,9 +36,7 @@ def scrape_target_lego(query, limit=5):
     # Extract products from search results
     search_data = data.get("data", {}).get("search", {})
     products_raw = search_data.get("products", [])
-    
-    # print(f"\n[DEBUG] Found {len(products_raw)} products in search")
-    
+        
     products = []
     for idx, product in enumerate(products_raw):
       # print(f"\n[DEBUG] Product {idx + 1} keys: {list(product.keys())}")
