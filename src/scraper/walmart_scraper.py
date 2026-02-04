@@ -1,286 +1,64 @@
-# # import json
-# # from playwright.sync_api import sync_playwright
-# # import re
+import os
+import requests
+from dotenv import load_dotenv
 
-# # def get_walmart_price(set_num):
-# #   with sync_playwright() as p:
-# #     browser = p.firefox.launch(headless=True)
-# #     page = browser.new_page()
-# #     page.goto(f"https://www.walmart.com/search?q={set_num}+lego", timeout=60000)
-# #     html = page.content()
-# #     browser.close()
+load_dotenv()
+SCRAPER_API_KEY = os.getenv("SCRAPER_API")
 
-# #   # Walmart embeds JSON in <script id="__NEXT_DATA__" type="application/json">...</script>
-# #   match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
-# #   if not match:
-# #     return {"error": "Could not locate __NEXT_DATA__ JSON"}
 
-# #   json_text = match.group(1).strip()
-# #   try:
-# #     data = json.loads(json_text)
-# #   except Exception as e:
-# #     return {"error": f"Failed to parse Walmart JSON: {e}"}
+def get_walmart_price_scraperapi(product_url: str) -> dict:
+  if not SCRAPER_API_KEY:
+    return {
+      "error": "Missing SCRAPER_API key",
+      "url": product_url
+    }
 
-# #   try:
-# #     product = data["props"]["pageProps"]["initialData"]["searchResult"]["itemStacks"][0]["items"][0]
-# #     price = product.get("priceInfo", {}).get("priceDisplay", "N/A")
-# #     url = "https://www.walmart.com" + product.get("canonicalUrl", "")
-# #     return {"set_num": set_num, "price": price, "url": url}
-# #   except Exception as e:
-# #     return {"error": f"Failed to extract data: {e}"}
+  params = {
+    "api_key": SCRAPER_API_KEY,
+    "url": product_url,
+    "autoparse": "true",
+    "render": "true",
+    "output_format": "json",
+    "follow_redirect": "false"
+  }
 
-# # if __name__ == "__main__":
-# #   print(get_walmart_price("75399"))
-# """
-# Walmart LEGO Scraper
+  try:
+    r = requests.get(
+      "https://api.scraperapi.com/",
+      params=params,
+      timeout=60
+    )
+    r.raise_for_status()
+    data = r.json()
 
-# IMPORTANT: Walmart has very aggressive bot detection that blocks automated scraping.
-# This script won't work reliably without additional measures.
+    price = data.get("price")
 
-# Options to make this work:
+    raw_name = data.get("product_name")
+    name = clean_product_name(raw_name) if raw_name else None
 
-# 1. Use a scraping service like:
-#    - ScraperAPI (https://www.scraperapi.com/)
-#    - Bright Data (https://brightdata.com/)
-#    - Oxylabs (https://oxylabs.io/)
-#    These services handle CAPTCHAs and bot detection for you.
+    if price is None:
+      return {
+        "error": "Price not found in ScraperAPI response",
+        "url": product_url
+      }
 
-# 2. Use Playwright with stealth plugins:
-#    - playwright-stealth
-#    - Add realistic delays and mouse movements
-#    - Use residential proxies
+    return {
+      "retailer": "Walmart",
+      "name": name,
+      "price": f"${price}",
+      "url": product_url
+    }
 
-# 3. Use Walmart's official API (if available for your use case)
-
-# 4. Manual option: Just check Walmart prices manually for now
-
-# For this project, I recommend focusing on retailers with friendlier scraping policies
-# (like Target which works well), or using a paid scraping service for Walmart.
-# """
-
-# import json
-# from playwright.sync_api import sync_playwright
-# from urllib.parse import quote_plus
-
-# def scrape_walmart_lego(query, limit=1):
-#   """
-#   Attempt to scrape Walmart (likely to be blocked by CAPTCHA)
-  
-#   This function is provided as a template but will likely not work
-#   due to Walmart's bot detection.
-#   """
-  
-#   print(f"\nSearching Walmart for: {query}")
-#   print("=" * 60)
-#   print("[WARNING] Walmart has aggressive bot detection.")
-#   print("[WARNING] This scraper will likely be blocked by CAPTCHA.")
-#   print("=" * 60)
-  
-#   # Placeholder return for when blocked
-#   return [{
-#     "Retailer": "Walmart",
-#     "Price": "BLOCKED - Bot detection active",
-#     "URL": f"https://www.walmart.com/search?q={quote_plus(query + ' lego')}"
-#   }]
-
-# def scrape_walmart_with_scraperapi(query, api_key, limit=1):
-#   """
-#   Alternative: Use ScraperAPI to bypass Walmart's bot detection
-  
-#   Sign up at https://www.scraperapi.com/ for an API key
-#   Free tier: 1,000 requests/month
-  
-#   Usage:
-#     api_key = "your_scraperapi_key_here"
-#     results = scrape_walmart_with_scraperapi("75399", api_key)
-#   """
-#   import requests
-  
-#   print(f"\nSearching Walmart via ScraperAPI for: {query}")
-#   print("=" * 60)
-  
-#   # ScraperAPI endpoint
-#   target_url = f"https://www.walmart.com/search?q={quote_plus(query + ' lego')}"
-  
-#   params = {
-#     'api_key': api_key,
-#     'url': target_url,
-#     'render': 'true'  # Enable JavaScript rendering
-#   }
-  
-#   try:
-#     response = requests.get('http://api.scraperapi.com/', params=params, timeout=60)
-#     response.raise_for_status()
+  except Exception as e:
+    return {
+      "error": str(e),
+      "url": product_url
+    }
     
-#     html = response.text
     
-#     # Save for debugging
-#     with open("walmart_scraperapi_debug.html", "w", encoding="utf-8") as f:
-#       f.write(html)
-    
-#     # Now parse the HTML for product data
-#     # (Similar logic to before, but now we have the actual page)
-    
-#     print("[SUCCESS] Page retrieved via ScraperAPI")
-#     print("[INFO] HTML saved to walmart_scraperapi_debug.html")
-#     print("[TODO] Add JSON parsing logic here")
-    
-#     return [{
-#       "Retailer": "Walmart",
-#       "Price": "N/A - Parse the HTML from walmart_scraperapi_debug.html",
-#       "URL": target_url
-#     }]
-    
-#   except Exception as e:
-#     print(f"[ERROR] ScraperAPI failed: {e}")
-#     return []
+def clean_product_name(name: str) -> str:
+  return name.split(" - ", 1)[0]
 
-# def scrape_walmart_manual_instructions(query):
-#   """
-#   Print instructions for manually checking Walmart prices
-#   """
-#   print(f"\nManual Walmart Price Check Instructions:")
-#   print("=" * 60)
-#   print(f"1. Visit: https://www.walmart.com/search?q={quote_plus(query + ' lego')}")
-#   print(f"2. Find the '{query}' LEGO set in the results")
-#   print(f"3. Note the price and URL")
-#   print(f"4. Return format: {{'Retailer': 'Walmart', 'Price': '$XX.XX', 'URL': '...'}}")
-#   print("=" * 60)
-
-# if __name__ == "__main__":
-#   # Default: Just show it's blocked
-#   results = scrape_walmart_lego("75399", limit=1)
-#   print("\nResults:")
-#   print("-" * 60)
-#   for prod in results:
-#     print(prod)
-  
-#   print("\n" + "=" * 60)
-#   print("RECOMMENDATION:")
-#   print("- Skip Walmart for now and focus on Target (which works)")
-#   print("- Or use a paid service like ScraperAPI")
-#   print("- Or check Walmart prices manually when needed")
-#   print("=" * 60)
-  
-#   # Show manual instructions as alternative
-#   print()
-#   scrape_walmart_manual_instructions("75399")
-
-# import json
-# import re
-# from urllib.parse import quote_plus
-# from typing import Optional
-
-# from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
-
-
-# def _extract_next_data(html: str) -> Optional[dict]:
-#     match = re.search(
-#         r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>',
-#         html,
-#         re.S
-#     )
-#     if not match:
-#         return None
-
-#     try:
-#         return json.loads(match.group(1).strip())
-#     except json.JSONDecodeError:
-#         return None
-
-
-# def _looks_blocked(html: str) -> bool:
-#     h = html.lower()
-#     return any(x in h for x in [
-#         "verify you are a human",
-#         "press & hold",
-#         "captcha",
-#         "blocked",
-#         "access denied",
-#         "robot",
-#         "unusual traffic",
-#         "are you human",
-#     ])
-
-
-# def get_walmart_price(set_num: str, timeout_ms: int = 60000) -> dict:
-#     query = f"{set_num} lego"
-#     search_url = f"https://www.walmart.com/search?q={quote_plus(query)}"
-
-#     with sync_playwright() as p:
-#         browser = p.firefox.launch(headless=True)
-#         page = browser.new_page()
-#         try:
-#             page.goto(
-#                 search_url,
-#                 timeout=timeout_ms,
-#                 wait_until="domcontentloaded"
-#             )
-#             page.wait_for_timeout(1500)
-#             html = page.content()
-#         except PlaywrightTimeoutError:
-#             browser.close()
-#             return {
-#                 "set_num": set_num,
-#                 "error": "Timeout loading Walmart",
-#                 "url": search_url
-#             }
-#         finally:
-#             try:
-#                 browser.close()
-#             except Exception:
-#                 pass
-
-#     if _looks_blocked(html):
-#         return {
-#             "set_num": set_num,
-#             "error": "Blocked/CAPTCHA",
-#             "url": search_url
-#         }
-
-#     data = _extract_next_data(html)
-#     if not data:
-#         return {
-#             "set_num": set_num,
-#             "error": "Could not parse __NEXT_DATA__",
-#             "url": search_url
-#         }
-
-#     try:
-#         stacks = data["props"]["pageProps"]["initialData"]["searchResult"]["itemStacks"]
-#         prod = stacks[0]["items"][0]
-
-#         price = (
-#             prod.get("priceInfo", {}).get("priceDisplay")
-#             or prod.get("priceInfo", {}).get("currentPrice", {}).get("priceString")
-#             or "N/A"
-#         )
-
-#         canonical = prod.get("canonicalUrl", "")
-#         product_url = (
-#             "https://www.walmart.com" + canonical
-#             if canonical.startswith("/")
-#             else canonical or search_url
-#         )
-
-#         name = prod.get("name") or prod.get("title") or "N/A"
-
-#         return {
-#             "set_num": set_num,
-#             "name": name,
-#             "price": price,
-#             "url": product_url
-#         }
-
-#     except Exception as e:
-#         return {
-#             "set_num": set_num,
-#             "error": f"Failed to extract product: {e}",
-#             "url": search_url
-#         }
-
-
-# if __name__ == "__main__":
-#     import sys
-#     set_num = sys.argv[1] if len(sys.argv) > 1 else "75399"
-#     print(get_walmart_price(set_num))
+if __name__ == "__main__":
+  url = "https://www.walmart.com/ip/LEGO-Speed-Champions-77255/17115356372"
+  print(get_walmart_price_scraperapi(url))
