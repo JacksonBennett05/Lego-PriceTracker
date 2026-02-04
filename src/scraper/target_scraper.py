@@ -26,8 +26,6 @@ def scrape_target_lego(query, limit=5):
   )
   
   try:
-    # print(f"\nSearching Target for: {query}")
-    # print("=" * 60)
     
     resp = requests.get(search_url, headers=headers, timeout=10)
     resp.raise_for_status()
@@ -39,12 +37,10 @@ def scrape_target_lego(query, limit=5):
         
     products = []
     for idx, product in enumerate(products_raw):
-      # print(f"\n[DEBUG] Product {idx + 1} keys: {list(product.keys())}")
       
       # Extract price
       price = "N/A"
       if "price" in product:
-        # print(f"[DEBUG] Price keys: {list(product['price'].keys())}")
         price_obj = product["price"]
         price = (price_obj.get("formatted_current_price") or
                 price_obj.get("current_retail") or
@@ -58,7 +54,6 @@ def scrape_target_lego(query, limit=5):
       name = prod_desc.get("title", "N/A")
       url = enrichment.get("buy_url", "N/A")
       
-      # print(f"[DEBUG] Extracted - Name: {name[:50]}..., Price: {price}")
       
       product_info = {
         "Retailer": "Target",
