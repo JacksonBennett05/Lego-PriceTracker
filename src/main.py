@@ -1,5 +1,6 @@
 from scraper.lego_scraper import brickset_login, get_lego_price
 from scraper.target_scraper import scrape_target_lego
+from scraper.walmart_scraper import get_walmart_price_by_query
 from utils.compare import find_cheapest
 import os
 
@@ -24,11 +25,14 @@ def main():
       correct = True
       
   target_set = scrape_target_lego(f"lego {set_number}")
-  lego_price_json = {"site": "lego.com", "Price": lego_set.get("Price", "N/A")}
-  target_price_json = {"site": "target.com", "Price": target_set.get("Price", "N/A")}
+  walmart_set = get_walmart_price_by_query(f"lego {set_number}")
+  lego_price_json = {"site": "Lego.com", "Price": lego_set.get("Price", "N/A")}
+  target_price_json = {"site": "Target.com", "Price": target_set.get("Price", "N/A")}
+  walmart_price_json = {"site": "Walmart.com", "Price": walmart_set.get("price", "N/A")}
+  
 
   print("=" * 60)
-  find_cheapest(lego_price_json, target_price_json)
+  find_cheapest(lego_price_json, target_price_json, walmart_price_json)
   
 if __name__ =="__main__":
   main()
