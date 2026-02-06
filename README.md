@@ -22,8 +22,8 @@ LegoPriceTracker is a Python project that compares prices for a specific LEGO se
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/LegoPriceTracker.git
-cd LegoPriceTracker
+git clone https://github.com/yourusername/Lego-Price-Comparator.git
+cd Lego-Price-Comparator
 ```
 
 2. **Create and activate a virtual environment**
@@ -48,7 +48,7 @@ This project relies on third-party APIs. **API keys are required** and should be
 
 ### 1. Create a `.env` file
 
-In the project root (same level as `requirements.txt`), create a file named:
+In the project root create a file named:
 
 ```
 .env
