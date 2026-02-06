@@ -1,15 +1,20 @@
 def find_cheapest(lego, target, walmart):
-  lego_price = lego.get("Price")
-  target_price = target.get("Price")
-  walmart_price = walmart.get("Price")
+  prices = {
+    "Lego.com": lego.get("Price"),
+    "Target.com": target.get("Price"),
+    "Walmart.com": walmart.get("Price")
+  }
 
-  lego_price = float(lego_price.strip('$'))
-  target_price = float(target_price.strip('$'))
-  walmart_price = float(walmart_price.strip('$'))
+  clean_prices = {}
+  for store, price in prices.items():
+    try:
+      clean_prices[store] = float(price.replace("$", ""))
+    except (TypeError, ValueError):
+      continue
   
-  if lego_price < target_price and walmart_price < target_price:
-    print(f"Lego.com is cheapest at ${lego_price}")
-  elif target_price < walmart_price and target_price < lego_price: 
-    print(f"Target.com is cheapest at ${target_price}")
+  if not clean_prices:
+    print("No prices available")
   else:
-    print(f"Walmart.com is cheapest at ${walmart_price}")
+    cheapest_store = min(clean_prices, key=clean_prices.get)
+    cheapest_price = clean_prices[cheapest_store]
+    print(f"{cheapest_store} is the cheapest at ${cheapest_price}")
